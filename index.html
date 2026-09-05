@@ -112,15 +112,43 @@ td.ctr{text-align:center;}
 .card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;}
 .card-actions{display:flex;gap:5px;flex-wrap:wrap;}
 
-/* ── TAGS ── */
-.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.tag-country{background:var(--accent-l);color:var(--accent-d);}
+/* ── DYNAMIC TAGS (Colors & Themes) ── */
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid transparent;}
+
 .tag-source{background:#E6EAF4;color:#2D4280;}
 [data-theme="dark"] .tag-source{background:#1A1F3A;color:#7B9FE8;}
-.tag-spec{background:#EEF3F0;color:#3D5046;}
-[data-theme="dark"] .tag-spec{background:#1A2820;color:#6BAA80;}
-.tag-nonveg{background:var(--warn-l);color:var(--warn);}
-.tag-oos{background:var(--warn-l);color:var(--warn);border:1px solid #f5c2b0;}
+
+/* Specifications */
+.tag-spec-veg { background: #E6F4EA; color: #1E8E3E; border-color: #CEEAD6; }
+[data-theme="dark"] .tag-spec-veg { background: #0E2919; color: #81C995; border-color:#133923; }
+
+.tag-spec-jain { background: #D7F7EB; color: #00796B; border-color: #B2DFDB; }
+[data-theme="dark"] .tag-spec-jain { background: #003630; color: #4DB6AC; border-color:#004D40; }
+
+.tag-spec-warn { background: #FCE8E6; color: #D93025; border-color: #FAD2CF; }
+[data-theme="dark"] .tag-spec-warn { background: #3c1614; color: #E57373; border-color:#5c211d; }
+
+.tag-spec-neutral { background: #F3F4F6; color: #4B5563; border-color: #E5E7EB; }
+[data-theme="dark"] .tag-spec-neutral { background: #2A2D2B; color: #9CA3AF; border-color:#3c403d; }
+
+/* Countries */
+.tag-cty-india { background: #FFF3E0; color: #E65100; border-color: #FFE0B2; }
+[data-theme="dark"] .tag-cty-india { background: #401B00; color: #FFB74D; border-color:#5D2700; }
+
+.tag-cty-usa { background: #E8F0FE; color: #1967D2; border-color: #D2E3FC; }
+[data-theme="dark"] .tag-cty-usa { background: #0D264F; color: #8AB4F8; border-color:#133775; }
+
+.tag-cty-red { background: #FCE8E6; color: #B31412; border-color: #FAD2CF; }
+[data-theme="dark"] .tag-cty-red { background: #3C1110; color: #F28B82; border-color:#5A1918; }
+
+.tag-cty-purple { background: #F3E8FD; color: #6B21A8; border-color: #E9D5FF; }
+[data-theme="dark"] .tag-cty-purple { background: #2A0C42; color: #D7A8FF; border-color:#3E1263; }
+
+.tag-cty-green { background: #E6F4EA; color: #137333; border-color: #CEEAD6; }
+[data-theme="dark"] .tag-cty-green { background: #0D3017; color: #81C995; border-color:#144A23; }
+
+.tag-cty-def { background: var(--accent-l); color: var(--accent-d); }
+
 
 /* ── PRESCRIPTION BADGE ── */
 .rx-badge{
@@ -167,15 +195,6 @@ tbody tr.rx-row td:first-child{ border-left:3px solid #e8c84a; }
 .sp-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);}
 .sp-val{font-size:13.5px;color:var(--text);font-weight:500;}
 .sp-actions{display:flex;gap:7px;padding:14px 20px;border-top:1px solid var(--border);flex-wrap:wrap;}
-
-/* ── REPORT FORM (inside slide) ── */
-.report-form{display:none;background:var(--warn-l);border:1px solid #f5c2b0;border-radius:10px;padding:14px;margin-top:6px;}
-.report-form.open{display:block;}
-.report-form h4{font-size:13px;font-weight:600;color:var(--warn);margin-bottom:10px;}
-.rf-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;display:block;}
-.rf-input{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--text);outline:none;margin-bottom:10px;transition:border-color .15s;}
-.rf-input:focus{border-color:var(--warn);}
-.rf-actions{display:flex;gap:7px;justify-content:flex-end;}
 
 /* ── MODALS ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,8,6,.55);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
@@ -378,7 +397,6 @@ let viewMode  = 'table';
 let darkMode  = localStorage.getItem('dark_fe') === '1';
 let reportId  = null; 
 
-// NEW: We will store live database states here instead of browser session storage
 let pendingReports = new Set(); 
 
 if (darkMode) document.documentElement.setAttribute('data-theme','dark');
@@ -396,13 +414,32 @@ function toggleFilters(){
   panel.classList.toggle('expanded');
 }
 
+// ── COLOR HELPERS ────────────────────────────────────────────────
+function specClass(s) {
+  if (!s) return 'tag-spec-neutral';
+  const l = s.toLowerCase();
+  if (l.includes('jain')) return 'tag-spec-jain';
+  if (l.includes('veg')) return 'tag-spec-veg';
+  if (l.includes('non-veg') || l.includes('bovine') || l.includes('marine')) return 'tag-spec-warn';
+  return 'tag-spec-neutral';
+}
+
+function countryClass(c) {
+  if (!c) return 'tag-cty-def';
+  const l = c.toLowerCase();
+  if (l === 'indian' || l === 'india' || l === 'chennai') return 'tag-cty-india';
+  if (l === 'usa') return 'tag-cty-usa';
+  if (l === 'uk' || l === 'canada') return 'tag-cty-red';
+  if (l === 'malaysia') return 'tag-cty-purple';
+  if (l === 'uae') return 'tag-cty-green';
+  return 'tag-cty-def';
+}
+
 // ── INIT ─────────────────────────────────────────────────────────
 async function init(){
-  // Fetch supplements
   const {data: suppData, error} = await db.from('supplements').select('*').order('name');
   if(error){document.getElementById('content').innerHTML=`<div class="loading-wrap"><p style="color:var(--warn)">Failed to load. Please refresh.</p></div>`;return;}
   
-  // NEW: Fetch all active/unreviewed suggestions from the database directly
   const {data: suggData} = await db.from('suggestions').select('supplement_id').eq('reviewed', false);
   pendingReports = new Set((suggData || []).map(s => s.supplement_id));
 
@@ -419,11 +456,16 @@ function fillSel(id,arr,ph){const el=document.getElementById(id),cur=el.value;el
 function setAv(v){avFilter=v;document.querySelectorAll('.av-btn').forEach(b=>b.classList.remove('active'));document.getElementById('av'+v.charAt(0).toUpperCase()+v.slice(1)).classList.add('active');filterData();}
 function setView(v){viewMode=v;document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('active'));document.getElementById('vt-'+v).classList.add('active');filterData();}
 function filterData(){
-  const q=norm(document.getElementById('searchInput').value);
+  const rawQ = document.getElementById('searchInput').value.toLowerCase();
+  const searchTerms = rawQ.split(/\s+/).filter(t => t.length > 0).map(t => t.replace(/[\W_]+/g, ''));
+  
   const name=document.getElementById('nameFilter').value,country=document.getElementById('countryFilter').value,source=document.getElementById('sourceFilter').value,spec=document.getElementById('specFilter').value;
+  
   const filtered=allData.filter(r=>{
     const hay=norm((r.name||'')+(r.website||'')+(r.dose||'')+(r.notes||'')+(r.specification||'')+(r.country||''));
-    return(!q||hay.includes(q))&&(!name||r.name===name)&&(!country||r.country===country)&&(!source||r.website===source)&&(!spec||r.specification===spec||(r.specification||'').toLowerCase()==='none specific')&&(avFilter==='all'||(avFilter==='in'&&r.in_stock!==false)||(avFilter==='out'&&r.in_stock===false));
+    const matchQ = searchTerms.length === 0 || searchTerms.every(term => hay.includes(term));
+
+    return matchQ &&(!name||r.name===name)&&(!country||r.country===country)&&(!source||r.website===source)&&(!spec||r.specification===spec||(r.specification||'').toLowerCase()==='none specific')&&(avFilter==='all'||(avFilter==='in'&&r.in_stock!==false)||(avFilter==='out'&&r.in_stock===false));
   });
   renderStats(filtered);
   viewMode==='table'?renderTable(filtered):renderCards(filtered);
@@ -449,8 +491,8 @@ function renderTable(rows){
     <th>Source</th><th>Specification</th><th>Dose</th><th>Link</th><th>Action</th>
   </tr></thead>
   <tbody>${rows.map(r=>{
-    const ok=r.in_stock!==false,isNV=/non-veg|bovine|marine/i.test(r.specification||'');
-    const alreadyReported = pendingReports.has(r.id); // NEW: Checks database state
+    const ok=r.in_stock!==false;
+    const alreadyReported = pendingReports.has(r.id); 
     const lHTML=r.link?`<div class="link-acts"><a class="lbtn lbtn-open" href="${esc(r.link)}" target="_blank" rel="noopener">Open</a><button class="lbtn lbtn-copy" onclick="copyLink(this,'${esc(r.link)}',${r.id})">Copy</button></div>`:`<span style="color:var(--muted);font-size:11px">—</span>`;
     
     const reportHTML=alreadyReported
@@ -460,9 +502,9 @@ function renderTable(rows){
     return`<tr class="${ok?'':'oos'} ${r.is_prescription?'rx-row':''}">
       <td class="ctr"><span class="status-dot ${ok?'in':'out'}" title="${ok?'In stock':'Out of stock'}"></span></td>
       <td class="name-cell" title="${esc(r.name)}">${esc(r.name)}${r.is_prescription?` <span class="rx-badge" title="Prescription item">Rx</span>`:''} ${r.notes?`<small>${esc(r.notes)}</small>`:''}</td>
-      <td><span class="tag tag-country">${esc(r.country||'—')}</span></td>
+      <td><span class="tag ${countryClass(r.country)}">${esc(r.country||'—')}</span></td>
       <td>${r.website?`<span class="tag tag-source">${esc(r.website)}</span>`:'<span style="color:var(--muted)">—</span>'}</td>
-      <td>${r.specification?`<span class="tag ${isNV?'tag-nonveg':'tag-spec'}">${esc(r.specification)}</span>`:'<span style="color:var(--muted)">—</span>'}</td>
+      <td>${r.specification?`<span class="tag ${specClass(r.specification)}">${esc(r.specification)}</span>`:'<span style="color:var(--muted)">—</span>'}</td>
       <td style="font-weight:600;font-size:12px">${esc(r.dose||'—')}</td>
       <td>${lHTML}</td>
       <td>${reportHTML}</td>
@@ -475,13 +517,13 @@ function renderCards(rows){
   const el=document.getElementById('content');
   if(!rows.length){el.innerHTML='<div class="empty-wrap">No supplements match.</div>';return;}
   el.innerHTML=`<div class="cards-grid">${rows.map(r=>{
-    const ok=r.in_stock!==false,isNV=/non-veg|bovine|marine/i.test(r.specification||'');
-    const alreadyReported = pendingReports.has(r.id); // NEW: Checks database state
+    const ok=r.in_stock!==false;
+    const alreadyReported = pendingReports.has(r.id); 
     const lBtns=r.link?`<a class="lbtn lbtn-open" href="${esc(r.link)}" target="_blank" rel="noopener">Open</a><button class="lbtn lbtn-copy" onclick="event.stopPropagation();copyLink(this,'${esc(r.link)}',${r.id})">Copy</button>`:`<span style="color:var(--muted);font-size:11px">No link</span>`;
     
     return`<div class="card${ok?'':' oos'}" onclick="openSlide(${r.id})">
       <div class="card-top">
-        <div><div class="card-name">${esc(r.name)}${r.is_prescription?` <span class="rx-badge">Rx</span>`:''}</div><div class="card-tags"><span class="tag tag-country">${esc(r.country||'—')}</span>${r.specification?`<span class="tag ${isNV?'tag-nonveg':'tag-spec'}">${esc(r.specification)}</span>`:''}</div></div>
+        <div><div class="card-name">${esc(r.name)}${r.is_prescription?` <span class="rx-badge">Rx</span>`:''}</div><div class="card-tags"><span class="tag ${countryClass(r.country)}">${esc(r.country||'—')}</span>${r.specification?`<span class="tag ${specClass(r.specification)}">${esc(r.specification)}</span>`:''}</div></div>
         <span class="status-dot ${ok?'in':'out'}" style="margin-top:4px" title="${ok?'In stock':'Out of stock'}"></span>
       </div>
       ${r.dose||r.website?`<div style="font-size:12px;color:var(--muted)">${esc(r.website||'')}${r.website&&r.dose?' · ':''}${esc(r.dose||'')}</div>`:''}
@@ -499,11 +541,11 @@ function renderCards(rows){
 function openSlide(id){
   const r=allData.find(x=>x.id===id);if(!r)return;
   const ok=r.in_stock!==false;
-  const alreadyReported = pendingReports.has(r.id); // NEW: Checks database state
+  const alreadyReported = pendingReports.has(r.id); 
   document.getElementById('spTitle').innerHTML=esc(r.name)+(r.is_prescription?' <span class="rx-badge" style="font-size:11px;vertical-align:middle">Rx</span>':'');
   document.getElementById('spBody').innerHTML=`
-    <div class="sp-row"><div class="sp-lbl">Country</div><div class="sp-val"><span class="tag tag-country">${esc(r.country||'—')}</span></div></div>
-    <div class="sp-row"><div class="sp-lbl">Specification</div><div class="sp-val">${r.specification?`<span class="tag tag-spec">${esc(r.specification)}</span>`:'—'}</div></div>
+    <div class="sp-row"><div class="sp-lbl">Country</div><div class="sp-val"><span class="tag ${countryClass(r.country)}">${esc(r.country||'—')}</span></div></div>
+    <div class="sp-row"><div class="sp-lbl">Specification</div><div class="sp-val">${r.specification?`<span class="tag ${specClass(r.specification)}">${esc(r.specification)}</span>`:'—'}</div></div>
     <div class="sp-row"><div class="sp-lbl">Source</div><div class="sp-val">${r.website?`<span class="tag tag-source">${esc(r.website)}</span>`:'—'}</div></div>
     <div class="sp-row"><div class="sp-lbl">Dose</div><div class="sp-val" style="font-weight:600">${esc(r.dose||'—')}</div></div>
     <div class="sp-row"><div class="sp-lbl">Availability</div><div class="sp-val">${ok?'<span style="color:var(--accent);font-weight:600">✓ In Stock</span>':'<span style="color:var(--warn);font-weight:600">✕ Out of Stock</span>'}</div></div>
@@ -552,7 +594,6 @@ async function submitReport(){
   }]);
   if(error){toast('Failed to submit. Please try again.',true);return;}
   
-  // NEW: Update live memory 
   pendingReports.add(reportId);
   
   closeReport();
