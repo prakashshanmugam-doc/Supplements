@@ -24,8 +24,8 @@ html,body{height:100%;overflow:hidden;}
 body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);display:flex;flex-direction:column;font-size:14px;transition:background .25s,color .25s;}
 
 /* ── LAYOUT ── */
-.app-shell{display:flex;flex:1;overflow:hidden;}
-.left-panel{width:290px;min-width:250px;flex-shrink:0;background:var(--panel);color:#fff;display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.15);z-index:10;}
+.app-shell{display:flex;flex:1;overflow:hidden;position:relative;}
+.left-panel{width:290px;min-width:250px;flex-shrink:0;background:var(--panel);color:#fff;display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.15);z-index:1000;}
 .left-top{padding:22px 22px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
 .app-label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px;}
 .left-top h1{font-family:'DM Serif Display',serif;font-size:21px;color:#fff;line-height:1.2;}
@@ -82,9 +82,17 @@ select.fsel option{color:var(--text);background:var(--surface);}
 .stat-chip.danger strong{color:var(--warn);}
 
 .content{flex:1;overflow-y:auto;padding:18px 22px 40px;}
-.loading-wrap,.empty-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:12px;color:var(--muted);font-size:14px;}
-.spinner{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .65s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+.empty-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:12px;color:var(--muted);font-size:14px;}
+
+/* ── SKELETON LOADER ── */
+.skeleton-wrap { display:flex; flex-direction:column; width:100%; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; background:var(--surface); box-shadow:var(--shadow); }
+.skeleton-row { display:flex; padding:16px 20px; border-bottom:1px solid var(--border); gap:20px; align-items:center; }
+.skeleton-row:last-child { border-bottom:none; }
+.sk-box { height:14px; background:rgba(0,0,0,.06); border-radius:6px; animation:sk-pulse 1.5s infinite ease-in-out; }
+[data-theme="dark"] .sk-box { background:rgba(255,255,255,.06); }
+.sk-c { width:20px; height:20px; border-radius:50%; flex-shrink:0; }
+.sk-1 { width:22%; } .sk-2 { width:12%; } .sk-3 { width:10%; height:24px; border-radius:100px; } .sk-4 { width:15%; }
+@keyframes sk-pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
 
 /* ── TABLE ── */
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);transition:background .25s,border-color .25s;}
@@ -112,56 +120,32 @@ td.ctr{text-align:center;}
 .card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;}
 .card-actions{display:flex;gap:5px;flex-wrap:wrap;}
 
-/* ── DYNAMIC TAGS (Colors & Themes) ── */
+/* ── DYNAMIC TAGS ── */
 .tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid transparent;}
-
 .tag-source{background:#E6EAF4;color:#2D4280;}
 [data-theme="dark"] .tag-source{background:#1A1F3A;color:#7B9FE8;}
-
-/* Specifications */
 .tag-spec-veg { background: #E6F4EA; color: #1E8E3E; border-color: #CEEAD6; }
 [data-theme="dark"] .tag-spec-veg { background: #0E2919; color: #81C995; border-color:#133923; }
-
 .tag-spec-jain { background: #D7F7EB; color: #00796B; border-color: #B2DFDB; }
 [data-theme="dark"] .tag-spec-jain { background: #003630; color: #4DB6AC; border-color:#004D40; }
-
 .tag-spec-warn { background: #FCE8E6; color: #D93025; border-color: #FAD2CF; }
 [data-theme="dark"] .tag-spec-warn { background: #3c1614; color: #E57373; border-color:#5c211d; }
-
 .tag-spec-neutral { background: #F3F4F6; color: #4B5563; border-color: #E5E7EB; }
 [data-theme="dark"] .tag-spec-neutral { background: #2A2D2B; color: #9CA3AF; border-color:#3c403d; }
-
-/* Countries */
 .tag-cty-india { background: #FFF3E0; color: #E65100; border-color: #FFE0B2; }
 [data-theme="dark"] .tag-cty-india { background: #401B00; color: #FFB74D; border-color:#5D2700; }
-
 .tag-cty-usa { background: #E8F0FE; color: #1967D2; border-color: #D2E3FC; }
 [data-theme="dark"] .tag-cty-usa { background: #0D264F; color: #8AB4F8; border-color:#133775; }
-
 .tag-cty-red { background: #FCE8E6; color: #B31412; border-color: #FAD2CF; }
 [data-theme="dark"] .tag-cty-red { background: #3C1110; color: #F28B82; border-color:#5A1918; }
-
 .tag-cty-purple { background: #F3E8FD; color: #6B21A8; border-color: #E9D5FF; }
 [data-theme="dark"] .tag-cty-purple { background: #2A0C42; color: #D7A8FF; border-color:#3E1263; }
-
 .tag-cty-green { background: #E6F4EA; color: #137333; border-color: #CEEAD6; }
 [data-theme="dark"] .tag-cty-green { background: #0D3017; color: #81C995; border-color:#144A23; }
-
 .tag-cty-def { background: var(--accent-l); color: var(--accent-d); }
 
-
-/* ── PRESCRIPTION BADGE ── */
-.rx-badge{
-  display:inline-flex;align-items:center;gap:3px;
-  background:#1a1a2e;color:#e8c84a;
-  border:1px solid #e8c84a44;
-  border-radius:4px;font-size:9.5px;font-weight:700;
-  padding:1px 6px;letter-spacing:.4px;text-transform:uppercase;
-  flex-shrink:0;cursor:default;
-}
+.rx-badge{ display:inline-flex;align-items:center;gap:3px; background:#1a1a2e;color:#e8c84a; border:1px solid #e8c84a44; border-radius:4px;font-size:9.5px;font-weight:700; padding:1px 6px;letter-spacing:.4px;text-transform:uppercase; flex-shrink:0;cursor:default; }
 tbody tr.rx-row td:first-child{ border-left:3px solid #e8c84a; }
-
-/* ── STATUS ICON (read-only) ── */
 .status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .status-dot.in{background:#5aab82;}
 .status-dot.out{background:var(--warn);}
@@ -215,15 +199,40 @@ tbody tr.rx-row td:first-child{ border-left:3px solid #e8c84a; }
 #toast.show{transform:translateY(0);opacity:1;}
 #toast.err{background:var(--warn);}
 
-/* ── MOBILE ── */
+/* ── MOBILE BOTTOM SHEET ── */
+@media(min-width:861px){
+  .filter-overlay, .handle-area, .mobile-header, .mobile-filter-btn { display: none; }
+}
 @media(max-width:860px){
   html,body{height:100%;overflow:hidden;}
   .app-shell{flex-direction:column;height:100vh;overflow:hidden;}
-  .left-panel{width:100%;min-width:unset;flex-shrink:0;max-height:52px;overflow:hidden;transition:max-height .3s ease;position:relative;z-index:20;}
-  .left-panel.expanded{ max-height:85vh; overflow-y:auto; }
-  .filter-toggle-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 20px;background:transparent;border:none;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;flex-shrink:0;}
-  .filter-toggle-btn svg{transition:transform .25s;}
-  .left-panel.expanded .filter-toggle-btn svg{transform:rotate(180deg);}
+  
+  /* The Bottom Sheet */
+  .left-panel{
+    position:fixed; bottom:0; left:0; width:100%;
+    height:auto; max-height:85vh; padding-bottom:env(safe-area-inset-bottom);
+    transform:translateY(100%); transition:transform 0.35s cubic-bezier(0.32, 1, 0.23, 1);
+    z-index:2000; border-radius:24px 24px 0 0; background:var(--panel);
+  }
+  .left-panel.sheet-open{ transform:translateY(0); }
+  
+  /* Swipe Handle */
+  .handle-area { width:100%; padding:14px 0 10px; cursor:grab; display:flex; justify-content:center; }
+  .mobile-sheet-handle { width:45px; height:5px; background:rgba(255,255,255,0.25); border-radius:10px; }
+  
+  /* Filter Overlay */
+  .filter-overlay {
+    display:block; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1999;
+    opacity:0; pointer-events:none; transition:opacity 0.35s ease; backdrop-filter:blur(2px);
+  }
+  .filter-overlay.sheet-open { opacity:1; pointer-events:auto; }
+  
+  /* Mobile Header */
+  .mobile-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--panel); color:#fff; flex-shrink:0; }
+  .mobile-header h1 { font-family:'DM Serif Display',serif; font-size:22px; line-height:1; margin:0; }
+  .mobile-filter-btn { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); color:#fff; font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:8px; cursor:pointer; transition:background 0.2s; }
+  .mobile-filter-btn:hover { background:rgba(255,255,255,0.22); }
+  
   .left-top{ display:none; }
   .right-panel{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
   .content{flex:1;overflow-y:auto;padding:12px 14px 40px;-webkit-overflow-scrolling:touch;}
@@ -234,22 +243,18 @@ tbody tr.rx-row td:first-child{ border-left:3px solid #e8c84a; }
   .stats-bar{padding:6px 14px;}
   .lbtn{padding:7px 12px;font-size:12px;}
   .report-btn{padding:7px 10px;}
-  .left-filters{padding:10px 18px 16px;}
+  .left-filters{padding:0 18px 16px;}
   .left-footer{padding:8px 18px;}
 }
-@media(min-width:861px){ .filter-toggle-btn{display:none;} }
 </style>
 </head>
 <body>
+
+<div class="filter-overlay" id="filterOverlay" onclick="toggleFilters()"></div>
+
 <div class="app-shell">
 <aside class="left-panel" id="leftPanel">
-  <button class="filter-toggle-btn" onclick="toggleFilters()" aria-label="Toggle filters">
-    <span>
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:7px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Filters &amp; Search
-    </span>
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-  </button>
+  <div class="handle-area" id="handleArea"><div class="mobile-sheet-handle"></div></div>
   <div class="left-top">
     <div class="app-label">Reference</div>
     <h1>Supplement<br>Repository</h1>
@@ -302,6 +307,15 @@ tbody tr.rx-row td:first-child{ border-left:3px solid #e8c84a; }
 </aside>
 
 <div class="right-panel">
+  <!-- New Mobile App Header -->
+  <div class="mobile-header">
+    <h1>Supplements</h1>
+    <button class="mobile-filter-btn" onclick="toggleFilters()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Filters
+    </button>
+  </div>
+  
   <div class="toolbar">
     <div class="view-toggle">
       <button class="vt-btn active" id="vt-table" onclick="setView('table')">
@@ -322,11 +336,23 @@ tbody tr.rx-row td:first-child{ border-left:3px solid #e8c84a; }
   </div>
   <div class="stats-bar" id="statsBar"></div>
   <div class="content" id="content">
-    <div class="loading-wrap"><div class="spinner"></div>Loading supplements…</div>
+    
+    <!-- New Skeleton Loader mimics a table structure -->
+    <div class="skeleton-wrap">
+      <div class="skeleton-row" style="background:var(--surface); border-bottom:1px solid var(--border)"><div class="sk-box" style="width:100%;height:10px;background:transparent"></div></div>
+      <div class="skeleton-row"><div class="sk-c sk-box"></div><div class="sk-box sk-1"></div><div class="sk-box sk-4"></div><div class="sk-box sk-2"></div><div class="sk-box sk-3"></div></div>
+      <div class="skeleton-row"><div class="sk-c sk-box"></div><div class="sk-box sk-1"></div><div class="sk-box sk-4"></div><div class="sk-box sk-2"></div><div class="sk-box sk-3"></div></div>
+      <div class="skeleton-row"><div class="sk-c sk-box"></div><div class="sk-box sk-1"></div><div class="sk-box sk-4"></div><div class="sk-box sk-2"></div><div class="sk-box sk-3"></div></div>
+      <div class="skeleton-row"><div class="sk-c sk-box"></div><div class="sk-box sk-1"></div><div class="sk-box sk-4"></div><div class="sk-box sk-2"></div><div class="sk-box sk-3"></div></div>
+      <div class="skeleton-row"><div class="sk-c sk-box"></div><div class="sk-box sk-1"></div><div class="sk-box sk-4"></div><div class="sk-box sk-2"></div><div class="sk-box sk-3"></div></div>
+      <div class="skeleton-row"><div class="sk-c sk-box"></div><div class="sk-box sk-1"></div><div class="sk-box sk-4"></div><div class="sk-box sk-2"></div><div class="sk-box sk-3"></div></div>
+    </div>
+    
   </div>
 </div>
 </div>
 
+<!-- Modal Overlays -->
 <div class="slide-overlay" id="slideOverlay" onclick="closeSlide()"></div>
 <div class="slide-panel" id="slidePanel">
   <div class="sp-header">
@@ -396,7 +422,6 @@ let avFilter  = 'all';
 let viewMode  = 'table';
 let darkMode  = localStorage.getItem('dark_fe') === '1';
 let reportId  = null; 
-
 let pendingReports = new Set(); 
 
 if (darkMode) document.documentElement.setAttribute('data-theme','dark');
@@ -404,15 +429,49 @@ function toggleDark(){darkMode=!darkMode;document.documentElement.setAttribute('
 
 document.addEventListener('keydown',e=>{
   if(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();document.getElementById('searchInput').focus();}
-  if(e.key==='Escape'){closeSlide();closeReport();closeNewSugg();}
+  if(e.key==='Escape'){closeSlide();closeReport();closeNewSugg(); if(document.getElementById('leftPanel').classList.contains('sheet-open')) toggleFilters();}
 });
 
 function norm(s){return(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
 
+// ── BOTTOM SHEET DRAG LOGIC ──────────────────────────────────────
 function toggleFilters(){
-  const panel=document.getElementById('leftPanel');
-  panel.classList.toggle('expanded');
+  const panel = document.getElementById('leftPanel');
+  const overlay = document.getElementById('filterOverlay');
+  const isOpen = panel.classList.contains('sheet-open');
+  if(isOpen){
+    panel.classList.remove('sheet-open');
+    overlay.classList.remove('sheet-open');
+    panel.style.transform = ''; 
+  } else {
+    panel.classList.add('sheet-open');
+    overlay.classList.add('sheet-open');
+  }
 }
+
+const handleArea = document.getElementById('handleArea');
+const panel = document.getElementById('leftPanel');
+let startY = 0;
+let currentY = 0;
+
+handleArea.addEventListener('touchstart', (e) => {
+  startY = e.touches[0].clientY;
+  panel.style.transition = 'none'; 
+}, {passive: true});
+
+handleArea.addEventListener('touchmove', (e) => {
+  currentY = e.touches[0].clientY;
+  const dy = currentY - startY;
+  if (dy > 0) { panel.style.transform = `translateY(${dy}px)`; }
+}, {passive: true});
+
+handleArea.addEventListener('touchend', (e) => {
+  panel.style.transition = ''; 
+  const dy = currentY - startY;
+  if (dy > 80) { toggleFilters(); } 
+  else { panel.style.transform = ''; }
+  currentY = 0;
+});
 
 // ── COLOR HELPERS ────────────────────────────────────────────────
 function specClass(s) {
@@ -438,7 +497,7 @@ function countryClass(c) {
 // ── INIT ─────────────────────────────────────────────────────────
 async function init(){
   const {data: suppData, error} = await db.from('supplements').select('*').order('name');
-  if(error){document.getElementById('content').innerHTML=`<div class="loading-wrap"><p style="color:var(--warn)">Failed to load. Please refresh.</p></div>`;return;}
+  if(error){document.getElementById('content').innerHTML=`<div class="empty-wrap" style="color:var(--warn)">Failed to load. Please refresh.</div>`;return;}
   
   const {data: suggData} = await db.from('suggestions').select('supplement_id').eq('reviewed', false);
   pendingReports = new Set((suggData || []).map(s => s.supplement_id));
@@ -483,7 +542,7 @@ function renderStats(rows){
 // ── TABLE ─────────────────────────────────────────────────────────
 function renderTable(rows){
   const el=document.getElementById('content');
-  if(!rows.length){el.innerHTML='<div class="empty-wrap">No supplements match.</div>';return;}
+  if(!rows.length){el.innerHTML='<div class="empty-wrap">No supplements match your filters.<br><button class="btn btn-cancel" style="margin-top:10px" onclick="clearAll()">Clear Filters</button></div>';return;}
   el.innerHTML=`<div class="table-wrap"><table>
   <colgroup><col class="c0"><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"><col class="c6"><col class="c7"></colgroup>
   <thead><tr>
@@ -515,7 +574,7 @@ function renderTable(rows){
 // ── CARDS ─────────────────────────────────────────────────────────
 function renderCards(rows){
   const el=document.getElementById('content');
-  if(!rows.length){el.innerHTML='<div class="empty-wrap">No supplements match.</div>';return;}
+  if(!rows.length){el.innerHTML='<div class="empty-wrap">No supplements match your filters.<br><button class="btn btn-cancel" style="margin-top:10px" onclick="clearAll()">Clear Filters</button></div>';return;}
   el.innerHTML=`<div class="cards-grid">${rows.map(r=>{
     const ok=r.in_stock!==false;
     const alreadyReported = pendingReports.has(r.id); 
@@ -595,7 +654,6 @@ async function submitReport(){
   if(error){toast('Failed to submit. Please try again.',true);return;}
   
   pendingReports.add(reportId);
-  
   closeReport();
   toast('Report submitted — thank you!');
   filterData(); 
@@ -620,7 +678,6 @@ async function submitNewSugg(){
   const country = document.getElementById('nsCountry').value.trim();
   const link = document.getElementById('nsLink').value.trim();
   const notes = document.getElementById('nsNote').value.trim();
-  
   const finalNotes = "NEW SUPPLEMENT SUGGESTION\n" + notes;
 
   const {error} = await db.from('suggestions').insert([{
